@@ -8,8 +8,18 @@ namespace Entities
         [SerializeField] private float speed;
         [SerializeField] private int health;
 
-        protected float Speed { get; set; }
-        protected int Health { get; set; }
+        public bool IsEnemy;
+        protected float Speed 
+        { 
+            get => speed; 
+            set => speed = value; 
+        }
+        protected int Health 
+        { 
+            get => health; 
+            set => health = value; 
+        }
+
         public abstract void TakeDamage(int value);
 
         public virtual void Die()

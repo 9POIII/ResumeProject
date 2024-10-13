@@ -6,12 +6,22 @@ namespace Entities
 {
     public class SwordMan : BaseEntity, IMovable, ICanAttack
     {
-        [SerializeField] private List<IDamageable> targets;
-        [SerializeField] private IDamageable currentTarget;
+        [SerializeField] private List<BaseEntity> targets;
+        [SerializeField] private BaseEntity currentTarget;
+        [SerializeField] private int damage;
+        [SerializeField] private float attackCooldown;
 
+        [Header("Distances")] 
+        [SerializeField] private float distanceToStop;
+
+        private Rigidbody2D rb;
+        private float distanceToTarget;
+        private float lastAttackTime;
+        
         private void Awake()
         {
-            targets = new List<IDamageable>();
+            targets = new List<BaseEntity>();
+            rb = GetComponent<Rigidbody2D>();
         }
 
         private void Update()
@@ -25,26 +35,38 @@ namespace Entities
 
             if (currentTarget != null)
             {
-                Move(((MonoBehaviour)currentTarget).transform.position);
+                distanceToTarget = Vector2.Distance(gameObject.transform.position, currentTarget.transform.position);
+
+                if (distanceToTarget <= distanceToStop)
+                {
+                    UseWeapon(damage);
+                }
+                else
+                {
+                    Move(currentTarget.transform.position);
+                }
             }
         }
 
         public void Move(Vector2 direction)
         {
-            Vector2 targetPosition = (currentTarget as MonoBehaviour).transform.position;
-            Vector2 direction1 = (targetPosition - (Vector2)transform.position).normalized;
-            transform.Translate(direction1 * Speed * Time.deltaTime);
+            Vector2 moveto = (direction - (Vector2)transform.position).normalized;
+            transform.Translate(moveto * Speed * Time.deltaTime);
         }
 
         public void UseWeapon(int value)
         {
-            if (currentTarget != null && IsTargetStillAlive(currentTarget))
+            if (Time.time >= lastAttackTime + attackCooldown)
             {
-                currentTarget.TakeDamage(value);
-            }
-            else
-            {
-                FindNearestTarget();
+                if (currentTarget != null && IsTargetStillAlive(currentTarget))
+                {
+                    currentTarget.TakeDamage(value);
+                    lastAttackTime = Time.time;
+                }
+                else
+                {
+                    FindNearestTarget();
+                }
             }
         }
 
@@ -55,7 +77,7 @@ namespace Entities
             {
                 Die();
             }
-        }
+        }   
 
         public override void Die()
         {
@@ -65,13 +87,13 @@ namespace Entities
         private void FindDamageableTargets()
         {
             targets.Clear();
-            MonoBehaviour[] allObjects = FindObjectsOfType<MonoBehaviour>();
+            BaseEntity[] allObjects = FindObjectsOfType<BaseEntity>();
 
             foreach (var obj in allObjects)
             {
-                if (obj is IDamageable damageable)
+                if (obj.IsEnemy)
                 {
-                    targets.Add(damageable);
+                    targets.Add(obj);
                 }
             }
         }
@@ -79,32 +101,29 @@ namespace Entities
         private void FindNearestTarget()
         {
             float closestDistance = float.MaxValue;
-            IDamageable nearestTarget = null;
+            BaseEntity nearestTarget = null;
 
             foreach (var target in targets)
             {
-                var targetGameObject = target as MonoBehaviour;
-
-                if (targetGameObject == null || !targetGameObject.gameObject.activeInHierarchy)
+                if (!IsTargetStillAlive(target))
                 {
                     continue;
                 }
 
-                float distanceToTarget = Vector2.Distance(transform.position, targetGameObject.transform.position);
+                float distanceToTargetLocal = Vector2.Distance(transform.position, target.transform.position);
 
-                if (distanceToTarget < closestDistance)
+                if (distanceToTargetLocal < closestDistance)
                 {
-                    closestDistance = distanceToTarget;
+                    closestDistance = distanceToTargetLocal;
                     nearestTarget = target;
                 }
             }
             currentTarget = nearestTarget; 
         }
 
-        private bool IsTargetStillAlive(IDamageable target)
+        private bool IsTargetStillAlive(BaseEntity target)
         {
-            MonoBehaviour targetGameObject = target as MonoBehaviour;
-            return targetGameObject != null && targetGameObject.gameObject.activeInHierarchy;
+            return target != null && target.gameObject.activeInHierarchy;
         }
     }
 }
