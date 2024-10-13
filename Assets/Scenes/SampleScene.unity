@@ -157,6 +157,9 @@ MonoBehaviour:
   IsEnemy: 1
   targets: []
   currentTarget: {fileID: 0}
+  damage: 0
+  attackCooldown: 1
+  distanceToStop: 0
 --- !u!212 &128920103
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -418,6 +421,9 @@ MonoBehaviour:
   IsEnemy: 0
   targets: []
   currentTarget: {fileID: 0}
+  damage: 2
+  attackCooldown: 1
+  distanceToStop: 0.2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

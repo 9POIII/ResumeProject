@@ -1,30 +1,29 @@
 using System.Collections.Generic;
-using Interfaces;
 using UnityEngine;
 
 namespace Entities
 {
-    public class SwordMan : BaseEntity, IMovable, ICanAttack
+    public abstract class CombatEntity : BaseEntity
     {
-        [SerializeField] private List<BaseEntity> targets;
-        [SerializeField] private BaseEntity currentTarget;
-        [SerializeField] private int damage;
-        [SerializeField] private float attackCooldown;
+        [SerializeField] protected List<BaseEntity> targets;
+        [SerializeField] protected BaseEntity currentTarget;
+        [SerializeField] protected int damage;
+        [SerializeField] protected float attackCooldown;
 
         [Header("Distances")] 
-        [SerializeField] private float distanceToStop;
+        [SerializeField] protected float distanceToStop;
 
-        private Rigidbody2D rb;
-        private float distanceToTarget;
-        private float lastAttackTime;
-        
-        private void Awake()
+        protected Rigidbody2D rb;
+        protected float distanceToTarget;
+        protected float lastAttackTime;
+
+        protected virtual void Awake()
         {
             targets = new List<BaseEntity>();
             rb = GetComponent<Rigidbody2D>();
         }
 
-        private void Update()
+        protected virtual void Update()
         {
             FindDamageableTargets();
 
@@ -48,13 +47,13 @@ namespace Entities
             }
         }
 
-        public void Move(Vector2 direction)
+        public virtual void Move(Vector2 direction)
         {
             Vector2 moveto = (direction - (Vector2)transform.position).normalized;
             transform.Translate(moveto * Speed * Time.deltaTime);
         }
 
-        public void UseWeapon(int value)
+        public virtual void UseWeapon(int value)
         {
             if (Time.time >= lastAttackTime + attackCooldown)
             {
@@ -77,28 +76,33 @@ namespace Entities
             {
                 Die();
             }
-        }   
+        }
 
         public override void Die()
         {
             Destroy(gameObject);
         }
 
-        private void FindDamageableTargets()
+        protected virtual void FindDamageableTargets()
         {
             targets.Clear();
             BaseEntity[] allObjects = FindObjectsOfType<BaseEntity>();
 
             foreach (var obj in allObjects)
             {
-                if (obj.IsEnemy)
+                if (IsValidTarget(obj))
                 {
                     targets.Add(obj);
                 }
             }
         }
 
-        private void FindNearestTarget()
+        protected virtual bool IsValidTarget(BaseEntity target)
+        {
+            return target.IsEnemy != this.IsEnemy;
+        }
+
+        protected virtual void FindNearestTarget()
         {
             float closestDistance = float.MaxValue;
             BaseEntity nearestTarget = null;
@@ -121,7 +125,7 @@ namespace Entities
             currentTarget = nearestTarget; 
         }
 
-        private bool IsTargetStillAlive(BaseEntity target)
+        protected bool IsTargetStillAlive(BaseEntity target)
         {
             return target != null && target.gameObject.activeInHierarchy;
         }
