@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Entities;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace GameLogic
 {
-    public class PlayerSpawner : MonoBehaviour
+    public class UnitSpawner : MonoBehaviour
     {
         public enum TypesOfUnits
         {
@@ -15,7 +16,7 @@ namespace GameLogic
             LongDistanceFighter,
         }
 
-        public static Action<TypesOfUnits> PlayerSpawnUnit;
+        public static Action<TypesOfUnits> SpawnUnitEvent;
         private Dictionary<TypesOfUnits, GameObject> unitPrefabs;
 
         [SerializeField] private GameObject nearFighterPrefab;
@@ -35,7 +36,7 @@ namespace GameLogic
                 { TypesOfUnits.LongDistanceFighter, longDistanceFighterPrefab }
             };
 
-            PlayerSpawnUnit += SpawnUnit;
+            SpawnUnitEvent += SpawnUnit;
         }
 
         private void Start()
@@ -55,20 +56,20 @@ namespace GameLogic
 
         private void OnDestroy()
         {
-            PlayerSpawnUnit -= SpawnUnit;
+            SpawnUnitEvent -= SpawnUnit;
         }
 
         private IEnumerator TestSpawnCoroutine()
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(Random.Range(1f, 5f));
             
             SpawnUnit(TypesOfUnits.NearFighter);
             
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(Random.Range(1f, 5f));
             
             SpawnUnit(TypesOfUnits.DistanceFighter);
             
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(Random.Range(1f, 5f));
             
             SpawnUnit(TypesOfUnits.LongDistanceFighter);
         }
