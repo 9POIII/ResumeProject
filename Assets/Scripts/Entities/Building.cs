@@ -6,7 +6,16 @@ namespace Entities
     {
         public override void TakeDamage(int value)
         {
-            throw new System.NotImplementedException();
+            Health -= value;
+            if (Health <= 0)
+            {
+                Die();
+            }
+        }
+
+        public override void Die()
+        {
+            Destroy(gameObject);
         }
     }
 }

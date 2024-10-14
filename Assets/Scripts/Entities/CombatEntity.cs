@@ -7,6 +7,7 @@ namespace Entities
     {
         [SerializeField] protected List<BaseEntity> targets;
         [SerializeField] protected BaseEntity currentTarget;
+        [SerializeField] protected Building enemyBuilding;
         [SerializeField] protected int damage;
         [SerializeField] protected float attackCooldown;
 
@@ -34,7 +35,7 @@ namespace Entities
 
             if (currentTarget != null)
             {
-                distanceToTarget = Vector2.Distance(gameObject.transform.position, currentTarget.transform.position);
+                distanceToTarget = Vector2.Distance(transform.position, currentTarget.transform.position);
 
                 if (distanceToTarget <= distanceToStop)
                 {
@@ -47,13 +48,13 @@ namespace Entities
             }
         }
 
-        public virtual void Move(Vector2 direction)
+        protected virtual void Move(Vector2 direction)
         {
             Vector2 moveto = (direction - (Vector2)transform.position).normalized;
             transform.Translate(moveto * Speed * Time.deltaTime);
         }
 
-        public virtual void UseWeapon(int value)
+        protected virtual void UseWeapon(int value)
         {
             if (Time.time >= lastAttackTime + attackCooldown)
             {
@@ -82,6 +83,10 @@ namespace Entities
         {
             Destroy(gameObject);
         }
+        public void SetEnemyBuilding(Building building)
+        {
+            enemyBuilding = building;
+        }
 
         protected virtual void FindDamageableTargets()
         {
@@ -94,6 +99,11 @@ namespace Entities
                 {
                     targets.Add(obj);
                 }
+            }
+
+            if (targets.Count == 0 && enemyBuilding != null)
+            {
+                currentTarget = enemyBuilding;
             }
         }
 
@@ -122,10 +132,11 @@ namespace Entities
                     nearestTarget = target;
                 }
             }
-            currentTarget = nearestTarget; 
+
+            currentTarget = nearestTarget ?? enemyBuilding; 
         }
 
-        protected bool IsTargetStillAlive(BaseEntity target)
+        private bool IsTargetStillAlive(BaseEntity target)
         {
             return target != null && target.gameObject.activeInHierarchy;
         }
