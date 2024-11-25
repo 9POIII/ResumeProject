@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Entities.Weapons;
 using GameLogic;
 using UnityEngine;
 
@@ -12,6 +13,8 @@ namespace Entities
         [SerializeField] protected Building enemyBuilding;
         [SerializeField] protected int damage;
         [SerializeField] protected float attackCooldown;
+        [SerializeField] protected Animator bitaAnimator;
+        [SerializeField] protected Weapon weapon;
 
         [Header("Distances")]
         [SerializeField] protected float distanceToStop;
@@ -20,6 +23,7 @@ namespace Entities
         protected float lastAttackTime;
 
         private bool isAttackingBuilding;
+        private static readonly int IsAttacking = Animator.StringToHash("IsAttacking");
 
         protected override void Awake()
         {
@@ -63,6 +67,7 @@ namespace Entities
         {
             Vector2 moveto = (direction - (Vector2)transform.position).normalized;
             transform.Translate(moveto * Speed * Time.deltaTime);
+            bitaAnimator.SetBool(IsAttacking, false);
         }
 
         protected virtual void UseWeapon(int value)
@@ -71,8 +76,8 @@ namespace Entities
             {
                 if (currentTarget != null && IsTargetStillAlive(currentTarget))
                 {
-                    currentTarget.TakeDamage(value);
                     lastAttackTime = Time.time;
+                    weapon?.Use(currentTarget, value);
                 }
             }
         }

@@ -361,6 +361,7 @@ GameObject:
   - component: {fileID: 1282152719626443090}
   - component: {fileID: 8563895381142269250}
   - component: {fileID: 1111554878786300403}
+  - component: {fileID: 2514886241105892325}
   m_Layer: 0
   m_Name: Bita
   m_TagString: Untagged
@@ -456,6 +457,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2514886241105892325
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8642129976023153788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a29dc2b4b9949d19dde0d53644aa5c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9166417577416573163
 GameObject:
   m_ObjectHideFlags: 0
@@ -487,7 +500,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5400496644678313769}
@@ -567,6 +580,8 @@ MonoBehaviour:
   enemyBuilding: {fileID: 0}
   damage: 2
   attackCooldown: 1
+  bitaAnimator: {fileID: 1111554878786300403}
+  weapon: {fileID: 2514886241105892325}
   distanceToStop: 1
 --- !u!58 &-8214461039139901618
 CircleCollider2D:

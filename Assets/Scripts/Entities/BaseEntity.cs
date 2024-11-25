@@ -33,7 +33,6 @@ namespace Entities
         {
             Health = maxHealth;
             entityView?.UpdateStats(health, maxHealth);
-            Debug.Log(Health);
         }
 
         public abstract void TakeDamage(int value);

@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 3567441012539809577}
   - component: {fileID: 440699282082105098}
   - component: {fileID: 7381589862956183551}
+  - component: {fileID: 7144127391043769160}
   m_Layer: 0
   m_Name: Bita
   m_TagString: Untagged
@@ -127,7 +128,7 @@ Animator:
   m_GameObject: {fileID: 713055709837444630}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: ddd00924482144d42a63d1fa95657010, type: 2}
+  m_Controller: {fileID: 9100000, guid: 09329ee4a483449659d87ed15113bf52, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -138,6 +139,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7144127391043769160
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 713055709837444630}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a29dc2b4b9949d19dde0d53644aa5c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5868048777307100589
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,7 +181,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8717646744794076702}
@@ -258,6 +271,8 @@ MonoBehaviour:
   enemyBuilding: {fileID: 0}
   damage: 2
   attackCooldown: 1
+  bitaAnimator: {fileID: 7381589862956183551}
+  weapon: {fileID: 7144127391043769160}
   distanceToStop: 1
 --- !u!114 &3192389552541868920
 MonoBehaviour:
