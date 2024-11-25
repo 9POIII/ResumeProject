@@ -16,16 +16,15 @@ namespace Entities
         [Header("Distances")]
         [SerializeField] protected float distanceToStop;
 
-        protected Rigidbody2D rb;
         protected float distanceToTarget;
         protected float lastAttackTime;
 
         private bool isAttackingBuilding;
 
-        protected virtual void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             targets = new List<BaseEntity>();
-            rb = GetComponent<Rigidbody2D>();
             UnitSpawner.SpawnUnitEvent += OnEnemySpawned;
         }
 
@@ -33,7 +32,8 @@ namespace Entities
         {
             if (currentTarget != null)
             {
-                distanceToTarget = Vector2.Distance(transform.position, currentTarget.transform.position);
+                distanceToTarget = Vector2.Distance(transform.position, 
+                    currentTarget.GetComponent<Collider2D>().ClosestPoint(transform.position));
                 if (distanceToTarget <= distanceToStop)
                 {
                     UseWeapon(damage);
@@ -98,7 +98,7 @@ namespace Entities
 
         private void OnTargetDeath()
         {
-            Debug.Log($"Target {currentTarget.name} is dead. Searching for new target.");
+            //Debug.Log($"Target {currentTarget.name} is dead. Searching for new target.");
             FindDamageableTargets();
             FindNearestTarget();
         }
