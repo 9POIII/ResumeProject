@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using GameLogic;
 using UnityEngine;
 
 namespace Entities
@@ -11,32 +13,27 @@ namespace Entities
         [SerializeField] protected int damage;
         [SerializeField] protected float attackCooldown;
 
-        [Header("Distances")] 
+        [Header("Distances")]
         [SerializeField] protected float distanceToStop;
 
         protected Rigidbody2D rb;
         protected float distanceToTarget;
         protected float lastAttackTime;
 
+        private bool isAttackingBuilding;
+
         protected virtual void Awake()
         {
             targets = new List<BaseEntity>();
             rb = GetComponent<Rigidbody2D>();
+            UnitSpawner.SpawnUnitEvent += OnEnemySpawned;
         }
 
         protected virtual void Update()
         {
-            FindDamageableTargets();
-
-            if (currentTarget == null || !IsTargetStillAlive(currentTarget))
-            {
-                FindNearestTarget();
-            }
-
             if (currentTarget != null)
             {
                 distanceToTarget = Vector2.Distance(transform.position, currentTarget.transform.position);
-
                 if (distanceToTarget <= distanceToStop)
                 {
                     UseWeapon(damage);
@@ -45,6 +42,20 @@ namespace Entities
                 {
                     Move(currentTarget.transform.position);
                 }
+            }
+            else
+            {
+                OnEnemySpawned();
+            }
+        }
+
+        private void OnEnemySpawned()
+        {
+            FindDamageableTargets();
+
+            if (!isAttackingBuilding || (currentTarget == null || !IsTargetStillAlive(currentTarget)))
+            {
+                FindNearestTarget();
             }
         }
 
@@ -63,16 +74,13 @@ namespace Entities
                     currentTarget.TakeDamage(value);
                     lastAttackTime = Time.time;
                 }
-                else
-                {
-                    FindNearestTarget();
-                }
             }
         }
 
         public override void TakeDamage(int value)
         {
             Health -= value;
+
             if (Health <= 0)
             {
                 Die();
@@ -81,8 +89,20 @@ namespace Entities
 
         public override void Die()
         {
-            Destroy(gameObject);
+            if (currentTarget != null)
+            {
+                currentTarget.OnUnitDeath -= OnTargetDeath;
+            }
+            base.Die();
         }
+
+        private void OnTargetDeath()
+        {
+            Debug.Log($"Target {currentTarget.name} is dead. Searching for new target.");
+            FindDamageableTargets();
+            FindNearestTarget();
+        }
+
         public void SetEnemyBuilding(Building building)
         {
             enemyBuilding = building;
@@ -92,7 +112,6 @@ namespace Entities
         {
             targets.Clear();
             BaseEntity[] allObjects = FindObjectsOfType<BaseEntity>();
-
             foreach (var obj in allObjects)
             {
                 if (IsValidTarget(obj))
@@ -114,6 +133,11 @@ namespace Entities
 
         protected virtual void FindNearestTarget()
         {
+            if (currentTarget != null)
+            {
+                currentTarget.OnUnitDeath -= OnTargetDeath;
+            }
+
             float closestDistance = float.MaxValue;
             BaseEntity nearestTarget = null;
 
@@ -125,7 +149,6 @@ namespace Entities
                 }
 
                 float distanceToTargetLocal = Vector2.Distance(transform.position, target.transform.position);
-
                 if (distanceToTargetLocal < closestDistance)
                 {
                     closestDistance = distanceToTargetLocal;
@@ -133,12 +156,42 @@ namespace Entities
                 }
             }
 
-            currentTarget = nearestTarget ?? enemyBuilding; 
+            if (nearestTarget != null)
+            {
+                currentTarget = nearestTarget;
+                isAttackingBuilding = false;
+                currentTarget.OnUnitDeath += OnTargetDeath;
+            }
+            else
+            {
+                currentTarget = enemyBuilding;
+                isAttackingBuilding = true;
+            }
         }
 
         private bool IsTargetStillAlive(BaseEntity target)
         {
             return target != null && target.gameObject.activeInHierarchy;
+        }
+
+        private void OnDestroy()
+        {
+            UnitSpawner.SpawnUnitEvent -= OnEnemySpawned;
+
+            if (currentTarget != null)
+            {
+                currentTarget.OnUnitDeath -= OnTargetDeath;
+            }
+        }
+
+        private void OnDisable()
+        {
+            UnitSpawner.SpawnUnitEvent -= OnEnemySpawned;
+
+            if (currentTarget != null)
+            {
+                currentTarget.OnUnitDeath -= OnTargetDeath;
+            }
         }
     }
 }

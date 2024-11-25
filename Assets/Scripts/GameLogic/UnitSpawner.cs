@@ -16,7 +16,8 @@ namespace GameLogic
             LongDistanceFighter,
         }
 
-        public static Action<TypesOfUnits> SpawnUnitEvent;
+        public static event Action SpawnUnitEvent;
+
         private Dictionary<TypesOfUnits, GameObject> unitPrefabs;
 
         [SerializeField] private GameObject nearFighterPrefab;
@@ -35,8 +36,6 @@ namespace GameLogic
                 { TypesOfUnits.DistanceFighter, distanceFighterPrefab },
                 { TypesOfUnits.LongDistanceFighter, longDistanceFighterPrefab }
             };
-
-            SpawnUnitEvent += SpawnUnit;
         }
 
         private void Start()
@@ -50,28 +49,24 @@ namespace GameLogic
             {
                 CombatEntity unit = Instantiate(unitPrefab, spawnPoint.position, Quaternion.identity)
                     .GetComponent<CombatEntity>();
+                unit.name = $"{unit.name} {Random.Range(0, 1337)}";
                 unit.SetEnemyBuilding(enemyBuilding);
+                SpawnUnitEvent?.Invoke();
             }
         }
-
-        private void OnDestroy()
-        {
-            SpawnUnitEvent -= SpawnUnit;
-        }
-
         private IEnumerator TestSpawnCoroutine()
         {
-            yield return new WaitForSeconds(Random.Range(1f, 5f));
+            yield return new WaitForSeconds(Random.Range(1f, 4f));
             
             SpawnUnit(TypesOfUnits.NearFighter);
             
-            yield return new WaitForSeconds(Random.Range(1f, 5f));
+            yield return new WaitForSeconds(Random.Range(1f, 4f));
             
-            SpawnUnit(TypesOfUnits.DistanceFighter);
+                //SpawnUnit(TypesOfUnits.DistanceFighter);
             
-            yield return new WaitForSeconds(Random.Range(1f, 5f));
+                /*yield return new WaitForSeconds(Random.Range(1f, 5f));
             
-            SpawnUnit(TypesOfUnits.LongDistanceFighter);
+            SpawnUnit(TypesOfUnits.LongDistanceFighter);*/
         }
     }
 }
