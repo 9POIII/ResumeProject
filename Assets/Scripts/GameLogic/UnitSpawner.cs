@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using Entities;
@@ -9,6 +8,14 @@ namespace GameLogic
 {
     public class UnitSpawner : MonoBehaviour
     {
+        [System.Serializable]
+        public class EnemySpawnSettings
+        {
+            public TypesOfUnits UnitType;
+            public int MaxSpawnCount = 5;
+            public float SpawnInterval = 2f;
+        }
+
         public enum TypesOfUnits
         {
             NearFighter,
@@ -16,7 +23,7 @@ namespace GameLogic
             LongDistanceFighter,
         }
 
-        public static event Action SpawnUnitEvent;
+        public static event System.Action SpawnUnitEvent;
 
         private Dictionary<TypesOfUnits, GameObject> unitPrefabs;
 
@@ -25,8 +32,9 @@ namespace GameLogic
         [SerializeField] private GameObject longDistanceFighterPrefab;
         
         [SerializeField] private Transform spawnPoint;
-        
         [SerializeField] private Building enemyBuilding;
+        
+        [SerializeField] private List<EnemySpawnSettings> enemySpawnSettings;
 
         private void Awake()
         {
@@ -40,7 +48,22 @@ namespace GameLogic
 
         private void Start()
         {
-            StartCoroutine(TestSpawnCoroutine());
+            foreach (var settings in enemySpawnSettings)
+            {
+                StartCoroutine(SpawnEnemies(settings));
+            }
+        }
+
+        private IEnumerator SpawnEnemies(EnemySpawnSettings settings)
+        {
+            int spawnCount = 0;
+
+            while (spawnCount < settings.MaxSpawnCount)
+            {
+                yield return new WaitForSeconds(settings.SpawnInterval);
+                SpawnUnit(settings.UnitType);
+                spawnCount++;
+            }
         }
 
         public void SpawnUnit(TypesOfUnits typeOfUnit)
@@ -48,25 +71,11 @@ namespace GameLogic
             if (unitPrefabs.TryGetValue(typeOfUnit, out GameObject unitPrefab))
             {
                 CombatEntity unit = Instantiate(unitPrefab, spawnPoint.position, Quaternion.identity)
-                    .GetComponent<CombatEntity>(); 
+                    .GetComponent<CombatEntity>();
                 unit.name = $"{unit.name} {Random.Range(0, 1337)}";
                 unit.SetEnemyBuilding(enemyBuilding);
                 SpawnUnitEvent?.Invoke();
             }
-        }
-        private IEnumerator TestSpawnCoroutine()
-        {
-            yield return new WaitForSeconds(Random.Range(1f, 4f));
-            
-            SpawnUnit(TypesOfUnits.NearFighter);
-            
-            yield return new WaitForSeconds(Random.Range(1f, 4f));
-            
-            SpawnUnit(TypesOfUnits.DistanceFighter);
-            
-            yield return new WaitForSeconds(Random.Range(1f, 5f));
-            
-            SpawnUnit(TypesOfUnits.LongDistanceFighter);
         }
     }
 }
