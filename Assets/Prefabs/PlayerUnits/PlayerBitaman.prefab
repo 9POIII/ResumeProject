@@ -484,7 +484,7 @@ GameObject:
   - component: {fileID: -347761946493509558}
   - component: {fileID: 4149807394442956409}
   m_Layer: 0
-  m_Name: Rahit
+  m_Name: PlayerBitaman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -580,7 +580,7 @@ MonoBehaviour:
   enemyBuilding: {fileID: 0}
   damage: 2
   attackCooldown: 1
-  bitaAnimator: {fileID: 1111554878786300403}
+  weaponAnimator: {fileID: 1111554878786300403}
   weapon: {fileID: 2514886241105892325}
   distanceToStop: 1
 --- !u!58 &-8214461039139901618

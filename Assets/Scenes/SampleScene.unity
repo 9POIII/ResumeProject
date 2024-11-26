@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nearFighterPrefab: {fileID: 9166417577416573163, guid: 544bc7d8bf380407faec0710436456e2, type: 3}
-  distanceFighterPrefab: {fileID: 9166417577416573163, guid: 544bc7d8bf380407faec0710436456e2, type: 3}
+  distanceFighterPrefab: {fileID: 9166417577416573163, guid: b65cd1ee4957a4dd9933d88c4325d75d, type: 3}
   longDistanceFighterPrefab: {fileID: 9166417577416573163, guid: 544bc7d8bf380407faec0710436456e2, type: 3}
   spawnPoint: {fileID: 1590631350}
   enemyBuilding: {fileID: 1618707002}
@@ -1241,7 +1241,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   nearFighterPrefab: {fileID: 5868048777307100589, guid: 2267e5a6775ce465d8ffd29cb4b70f03, type: 3}
-  distanceFighterPrefab: {fileID: 5868048777307100589, guid: 2267e5a6775ce465d8ffd29cb4b70f03, type: 3}
+  distanceFighterPrefab: {fileID: 5868048777307100589, guid: be9354752ca1940428a2e35c39ab4759, type: 3}
   longDistanceFighterPrefab: {fileID: 5868048777307100589, guid: 2267e5a6775ce465d8ffd29cb4b70f03, type: 3}
   spawnPoint: {fileID: 607496327}
   enemyBuilding: {fileID: 972653714}

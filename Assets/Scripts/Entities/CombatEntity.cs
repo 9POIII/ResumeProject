@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Entities.Weapons;
 using GameLogic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Entities
 {
@@ -13,7 +14,7 @@ namespace Entities
         [SerializeField] protected Building enemyBuilding;
         [SerializeField] protected int damage;
         [SerializeField] protected float attackCooldown;
-        [SerializeField] protected Animator bitaAnimator;
+        [SerializeField] protected Animator weaponAnimator;
         [SerializeField] protected Weapon weapon;
 
         [Header("Distances")]
@@ -67,7 +68,7 @@ namespace Entities
         {
             Vector2 moveto = (direction - (Vector2)transform.position).normalized;
             transform.Translate(moveto * Speed * Time.deltaTime);
-            bitaAnimator.SetBool(IsAttacking, false);
+            weaponAnimator.SetBool(IsAttacking, false);
         }
 
         protected virtual void UseWeapon(int value)
@@ -103,7 +104,6 @@ namespace Entities
 
         private void OnTargetDeath()
         {
-            //Debug.Log($"Target {currentTarget.name} is dead. Searching for new target.");
             FindDamageableTargets();
             FindNearestTarget();
         }
